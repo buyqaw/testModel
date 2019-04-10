@@ -3,6 +3,8 @@ import socket
 import sys
 import telepot
 
+from daemon import Daemon
+
 # Send message (msg) to users in the list (ids)
 def send_tlg_msg(msg, ids):
     x = 1
@@ -13,36 +15,41 @@ def send_tlg_msg(msg, ids):
        except:
            pass
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Bind the socket to the port
-server_address = ('0.0.0.0', 6666)
-print('starting up on {} port {}'.format(*server_address))
-sock.bind(server_address)
-send_tlg_msg("Я начал работу", ["@buyqawlogger"])
+class YourDaemon(Daemon):
+        def run(self):
 
-# Listen for incoming connections
-sock.listen(1)
+            # Create a TCP/IP socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-while True:
-    # Wait for a connection
-    print('waiting for a connection')
-    connection, client_address = sock.accept()
-    try:
-        print('connection from', client_address)
+            # Bind the socket to the port
+            server_address = ('0.0.0.0', 6666)
+            print('starting up on {} port {}'.format(*server_address))
+            sock.bind(server_address)
+            send_tlg_msg("Я начал работу", ["@buyqawlogger"])
 
-        # Receive the data in small chunks and retransmit it
-        while True:
-            data = connection.recv(5000)
-            print(data.decode('utf-8'))
-            send_tlg_msg(data.decode("utf-8"), ["@buyqawlogger"])
-            if data:
-                print('sending data back to the client')
-            else:
-                print('no data from', client_address)
-                break
+            # Listen for incoming connections
+            sock.listen(1)
 
-    finally:
-        # Clean up the connection
-        connection.close()
+            while True:
+                # Wait for a connection
+                print('waiting for a connection')
+                connection, client_address = sock.accept()
+                try:
+                    print('connection from', client_address)
+
+                    # Receive the data in small chunks and retransmit it
+                    while True:
+                        data = connection.recv(5000)
+                        print(data.decode('utf-8'))
+                        send_tlg_msg(data.decode("utf-8"), ["@buyqawlogger"])
+                        if data:
+                            print('sending data back to the client')
+                        else:
+                            print('no data from', client_address)
+                            break
+
+                finally:
+                    # Clean up the connection
+                    connection.close()
+
