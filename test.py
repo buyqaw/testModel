@@ -3,7 +3,7 @@ import socket
 import sys
 import telepot
 
-from daemon import Daemon
+from daemon import daemon
 
 # Send message (msg) to users in the list (ids)
 def send_tlg_msg(msg, ids):
@@ -16,7 +16,7 @@ def send_tlg_msg(msg, ids):
            pass
 
 
-class YourDaemon(Daemon):
+class YourDaemon(daemon):
         def run(self):
 
             # Create a TCP/IP socket
